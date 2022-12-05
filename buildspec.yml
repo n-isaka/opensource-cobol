@@ -1,0 +1,33 @@
+version: 0.2
+
+env:
+  shell: bash
+  variables:
+    ENV: "build"
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+      java: corretto11  # Karate実行のため、AWSの提供するOpenJDK(corretto)をインストール
+    commands:
+      - pip install -r src/requirements.txt
+  pre_build:
+    commands:
+      - flake8 src/server.py  # 静的解析(flake8)の実行
+      - bandit src/server.py  # 静的解析(bandit)の実行
+      - gunicorn src.server:app -c src/conf/gunicorn_conf.py --daemon  # アプリサーバーをデーモン起動
+      - sleep 1
+      - cd $CODEBUILD_SRC_DIR_KARATE_CONFIG  # Karateの展開ディレクトリに移動
+      - mvn clean test -Dtest=StudentsRunner  # Karateによるテスト実行
+  build:
+    commands:
+      - zip -r artifact.zip src
+  post_build:
+    commands:
+      - aws s3 cp artifact.zip s3://{BUCKET_NAME}    # BUCKET_NAMEは任意のバケット名
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: src
