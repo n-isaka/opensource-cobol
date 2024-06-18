@@ -1,0 +1,6 @@
+.deps/
+.libs/
+Makefile
+cob-config
+cobcrun
+cobcrun-cobcrun.o

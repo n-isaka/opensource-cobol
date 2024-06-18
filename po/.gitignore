@@ -1,0 +1,5 @@
+Makefile
+Makefile.in
+POTFILES
+opensource-cobol-1.5.2J.pot
+remove-potcdate.sed
