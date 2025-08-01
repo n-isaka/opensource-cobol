@@ -297,8 +297,7 @@ cob_create_call_stack_list (char *name)
 	struct call_stack_list *new_list = malloc (sizeof (struct call_stack_list));
 	memset (new_list, 0, sizeof (struct call_stack_list));
 	new_list->parent = current_call_stack_list;
-	new_list->name = malloc (strlen (name) + 1);
-	strcpy (new_list->name, name);
+	new_list->name = strdup (name);
 	current_call_stack_list = new_list;
 	return new_list;
 }
